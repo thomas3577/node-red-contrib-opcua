@@ -17,28 +17,27 @@ limitations under the License.
 -->
 
 <script type="text/javascript">
-    RED.nodes.registerType('OpcUa-Server',{
+    RED.nodes.registerType('OpcUa-Server', {
         category: 'opcua',
-        color:"#3FADB5",
+        color: "#3FADB5",
         defaults: {
-            port: {value: "53880", required: true},
-            name: {value:""},
-            endpoint: {value: ""}
+            port: { value: "53880", required: true },
+            name: { value: "" },
+            endpoint: { value: "" }
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 2,
         align: "right",
         icon: "opcuanodeLogo.png",
-        label: function() {
+        label: function () {
             return this.name || "OPC UA server";
         },
-        labelStyle: function() {
-            return this.name?"node_label_italic":"";
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
         }
     });
+
 </script>
-
-
 
 <script type="text/x-red" data-template-name="OpcUa-Server">
     <div class="form-row">
@@ -50,7 +49,7 @@ limitations under the License.
         <label for="node-input-name"><i class="icon-tasks"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="">
     </div>
-        <div class="form-row">
+    <div class="form-row">
         <label for="node-input-endpoint"><i class="icon-tasks"></i> Endpoint</label>
         <input type="text" id="node-input-endpoint" placeholder="UA/SimpleNodeRedServer">
     </div>

@@ -21,14 +21,14 @@ limitations under the License.
         category: 'opcua',
         color: "#3FADB5",
         defaults: {
-            endpoint: {value: "", required: true, type: "OpcUa-Endpoint"},
-            action: {value: "read", required: true},
-            time: {value: 10},
-            timeUnit: {value: "s"},
-            name: {value: ""}
+            endpoint: { value: "", required: true, type: "OpcUa-Endpoint" },
+            action: { value: "read", required: true },
+            time: { value: 10 },
+            timeUnit: { value: "s" },
+            name: { value: "" }
         },
         inputs: 1,
-        outputs: 1,
+        outputs: 2,
         align: "right",
         icon: "opcuanodeLogo.png",
         label: function () {
@@ -61,6 +61,7 @@ limitations under the License.
             }
         }
     });
+
 </script>
 
 
@@ -69,7 +70,7 @@ limitations under the License.
         <label for="node-input-endpoint"><i class="icon-tasks"></i> Endpoint</label>
         <input type="text" id="node-input-endpoint" placeholder="opc.tcp://localhost:4334">
     </div>
-     <div class="form-row">
+    <div class="form-row">
         <label for="node-input-action"><i class="fa fa-tasks"></i> Action</label>
         <select type="text" id="node-input-action" style="width:72%;">
             <option selected value="read">READ</option>
@@ -107,14 +108,16 @@ limitations under the License.
             <li>Browse</li>
             <li>Subscribe</li>
             <li>Event</li>
-			<li>Info</li>
-         </ul>
+            <li>Info</li>
+        </ul>
     </p>
-    <p>Inject your OPC UA address (NodeId) by the <strong>Topic</strong> of an Inject node or with the OpcUa-Item cotrolled by an Inject node.</p>
+    <p>Inject your OPC UA address (NodeId) by the <strong>Topic</strong> of an Inject node or with the OpcUa-Item cotrolled
+        by an Inject node.</p>
     <p>To Read/Write inject the Topic for every operation.</p>
     <p>The value to Write should be injected by an OpcUa-Item.</p>
-    <p>Inject the Topic only once on Subscribe or Event for subscription and you got the changing value on every Interval.
-        Every inject subscribes a new monitored Item.</p>
+    <p>Inject the Topic only once on Subscribe or Event for subscription and you got the changing value on every Interval. Every
+        inject subscribes a new monitored Item.</p>
     <p>Interval is setting for Client <strong>requestedPublishingInterval</strong> (default: 100ms).</p>
-    <p>Input <strong>msg.payload</strong> can bring an samplingInterval for monitored Items/Events in subscription (default: 100ms).</p>
+    <p>Input <strong>msg.payload</strong> can bring an samplingInterval for monitored Items/Events in subscription (default:
+        100ms).</p>
 </script>

@@ -42,24 +42,22 @@ module.exports = function (RED) {
         var equipmentNotFound = true;
         var initialized = false;
         var server = null;
-		var folder = null;
-		
+        var folder = null;
+
         function verbose_warn(logMessage) {
-            if (RED.settings.verbose) {
-                node.warn((node.name) ? node.name + ': ' + logMessage : 'OpcUaServerNode: ' + logMessage);
-            }
+            var msg = ((node.name) ? node.name + ': ' + logMessage : 'OpcUaServerNode: ' + logMessage);
+
+            node.send([null, msg]);
         }
 
-        function verbose_log(logMessage) {
-            if (RED.settings.verbose) {
-                node.log(logMessage);
-            }
+        function verbose_log(msg) {
+            node.send([null, msg]);
         }
 
-        node.status({fill: "red", shape: "ring", text: "Not running"});
+        node.status({ fill: "red", shape: "ring", text: "Not running" });
 
         var xmlFiles = [path.join(__dirname, 'public/vendor/opc-foundation/xml/Opc.Ua.NodeSet2.xml'),
-            path.join(__dirname, 'public/vendor/opc-foundation/xml/Opc.ISA95.NodeSet2.xml')];
+        path.join(__dirname, 'public/vendor/opc-foundation/xml/Opc.ISA95.NodeSet2.xml')];
         verbose_warn("node set:" + xmlFiles.toString());
 
         function initNewServer() {
@@ -78,17 +76,17 @@ module.exports = function (RED) {
             server.buildInfo.buildDate = new Date(2016, 3, 24);
             verbose_warn("init next...");
             server.initialize(post_initialize);
-			var hostname = os.hostname();
-			var discovery_server_endpointUrl = "opc.tcp://" + hostname + ":4840/UADiscovery";
-			verbose_log("\nregistering server to :".yellow + discovery_server_endpointUrl);
-			server.registerServer(discovery_server_endpointUrl, function (err) {
-				if (err) {
-					// cannot register server in discovery
-					verbose_warn("     warning : cannot register server into registry server");
-				} else {
-					verbose_log("     registering server to the discovery server : done.".cyan);
+            var hostname = os.hostname();
+            var discovery_server_endpointUrl = "opc.tcp://" + hostname + ":4840/UADiscovery";
+            verbose_log("\nregistering server to :".yellow + discovery_server_endpointUrl);
+            server.registerServer(discovery_server_endpointUrl, function (err) {
+                if (err) {
+                    // cannot register server in discovery
+                    verbose_warn("     warning : cannot register server into registry server");
+                } else {
+                    verbose_log("     registering server to the discovery server : done.".cyan);
                 }
-			});
+            });
         }
 
         function construct_my_address_space(addressSpace) {
@@ -125,7 +123,7 @@ module.exports = function (RED) {
 
                 value: {
                     get: function () {
-                        return new opcua.Variant({dataType: opcua.DataType.Double, value: variable2});
+                        return new opcua.Variant({ dataType: opcua.DataType.Double, value: variable2 });
                     },
                     set: function (variant) {
                         variable2 = parseFloat(variant.value);
@@ -144,7 +142,7 @@ module.exports = function (RED) {
 
                 value: {
                     get: function () {
-                        return new opcua.Variant({dataType: opcua.DataType.Double, value: available_memory()});
+                        return new opcua.Variant({ dataType: opcua.DataType.Double, value: available_memory() });
                     }
                 }
             });
@@ -159,7 +157,7 @@ module.exports = function (RED) {
 
                 value: {
                     get: function () {
-                        return new opcua.Variant({dataType: opcua.DataType.UInt16, value: variables.Counter});
+                        return new opcua.Variant({ dataType: opcua.DataType.UInt16, value: variables.Counter });
                     }
                 }
             });
@@ -171,18 +169,18 @@ module.exports = function (RED) {
                     inputArguments: [
                         {
                             name: "nbBarks",
-                            description: {text: "specifies the number of time I should bark"},
+                            description: { text: "specifies the number of time I should bark" },
                             dataType: opcua.DataType.UInt32
                         }, {
                             name: "volume",
-                            description: {text: "specifies the sound volume [0 = quiet ,100 = loud]"},
+                            description: { text: "specifies the sound volume [0 = quiet ,100 = loud]" },
                             dataType: opcua.DataType.UInt32
                         }
                     ],
 
                     outputArguments: [{
                         name: "Barks",
-                        description: {text: "the generated barks"},
+                        description: { text: "the generated barks" },
                         dataType: opcua.DataType.String,
                         valueRank: 1
                     }]
@@ -232,12 +230,12 @@ module.exports = function (RED) {
                     var endpointUrl = server.endpoints[0].endpointDescriptions()[0].endpointUrl;
                     verbose_log(" the primary server endpoint url is " + endpointUrl);
                 });
-                node.status({fill: "green", shape: "dot", text: "running"});
+                node.status({ fill: "green", shape: "dot", text: "running" });
                 initialized = true;
                 verbose_warn("server initialized");
             }
             else {
-                node.status({fill: "gray", shape: "dot", text: "not running"});
+                node.status({ fill: "gray", shape: "dot", text: "not running" });
                 node.error("server is not initialized")
             }
         }
@@ -250,12 +248,12 @@ module.exports = function (RED) {
 
         //######################################################################################
         node.on("input", function (msg) {
-			verbose_log(JSON.stringify(msg));
+            verbose_log(JSON.stringify(msg));
             if (server == undefined || !initialized) {
-				node.error("Server is not running");
-				return false;
-			}
-                
+                node.error("Server is not running");
+                return false;
+            }
+
 
             var payload = msg.payload;
 
@@ -289,7 +287,7 @@ module.exports = function (RED) {
 
             }
 
-            node.send(msg);
+            node.send([msg, null]);
         });
 
         function findReference(references, nodeId) {
@@ -317,10 +315,10 @@ module.exports = function (RED) {
         }
 
         function execute_opcua_command(msg) {
-			var payload = msg.payload;
+            var payload = msg.payload;
             var addressSpace = server.engine.addressSpace;
             var name;
-			
+
             switch (payload.opcuaCommand) {
 
                 case "restartOPCUAServer":
@@ -351,81 +349,80 @@ module.exports = function (RED) {
                     });
                     break;
 
-				case "setFolder":
+                case "setFolder":
                     verbose_warn("set Folder".concat(msg.topic)); // Example topic format ns=4;s=FolderName
-					folder = addressSpace.findNode(msg.topic);
+                    folder = addressSpace.findNode(msg.topic);
                     break;
 
-				case "addFolder":
+                case "addFolder":
                     verbose_warn("adding Folder".concat(msg.topic)); // Example topic format ns=4;s=FolderName
-					var parentFolder = addressSpace.rootFolder.objects;
-					if (folder!=null) {
-						parentFolder = folder; // Use previous folder as parent or setFolder() can be use to set parent
-					}
-					folder = addressSpace.addObject({
-							organizedBy: addressSpace.findNode(parentFolder.nodeId),
-							nodeId: msg.topic,
-							browseName: msg.topic.substring(7)
-					});
+                    var parentFolder = addressSpace.rootFolder.objects;
+                    if (folder != null) {
+                        parentFolder = folder; // Use previous folder as parent or setFolder() can be use to set parent
+                    }
+                    folder = addressSpace.addObject({
+                        organizedBy: addressSpace.findNode(parentFolder.nodeId),
+                        nodeId: msg.topic,
+                        browseName: msg.topic.substring(7)
+                    });
                     break;
-					
-				 case "addVariable":
+
+                case "addVariable":
                     verbose_warn("adding Node".concat(msg.topic)); // Example topic format ns=4;s=VariableName;datatype=Double
-					var datatype = "";
-					var opcuaDataType = null;
-					var e = msg.topic.indexOf("datatype=");
-					
-					var parentFolder = addressSpace.rootFolder.objects;
-					if (folder!=null) {
-						parentFolder = folder; // Use previous folder as parent or setFolder() can be use to set parent
-					}
-					
-					if (e>0)
-					{
-						name = msg.topic.substring(0,e-1);
-						datatype = msg.topic.substring(e+9);
+                    var datatype = "";
+                    var opcuaDataType = null;
+                    var e = msg.topic.indexOf("datatype=");
+
+                    var parentFolder = addressSpace.rootFolder.objects;
+                    if (folder != null) {
+                        parentFolder = folder; // Use previous folder as parent or setFolder() can be use to set parent
+                    }
+
+                    if (e > 0) {
+                        name = msg.topic.substring(0, e - 1);
+                        datatype = msg.topic.substring(e + 9);
                         var browseName = name.substring(7);
                         variables[browseName] = 0;
 
-						if (datatype=="Int32") {
-							opcuaDataType = opcua.DataType.Int32;
-						}
-						if (datatype=="Int16") {
-							opcuaDataType = opcua.DataType.Int16;
-						}
-						if (datatype=="UInt32") {
-							opcuaDataType = opcua.DataType.UInt32;
-						}
-						if (datatype=="UInt16") {
-							opcuaDataType = opcua.DataType.UInt16;
-						}
-						if (datatype=="Double") {
-							opcuaDataType = opcua.DataType.Double;
-						}
-						if (datatype=="Float") {
-							opcuaDataType = opcua.DataType.Float;
-						}
-						if (datatype=="String") {
-							opcuaDataType = opcua.DataType.String;
-							variables[browseName] = "";
-						}
-						if (datatype=="Boolean") {
-							opcuaDataType = opcua.DataType.Boolean;
-							variables[browseName] = true;
-						}
-						verbose_log(opcuaDataType.toString());
-						addressSpace.addVariable({
-							componentOf: addressSpace.findNode(parentFolder.nodeId),
-							nodeId: name,
-							browseName: browseName, // or displayName
-							dataType: opcuaDataType,
-							value: {
-                                get: function() {
-                                    return new opcua.Variant({dataType: opcuaDataType, value: variables[browseName]})
+                        if (datatype == "Int32") {
+                            opcuaDataType = opcua.DataType.Int32;
+                        }
+                        if (datatype == "Int16") {
+                            opcuaDataType = opcua.DataType.Int16;
+                        }
+                        if (datatype == "UInt32") {
+                            opcuaDataType = opcua.DataType.UInt32;
+                        }
+                        if (datatype == "UInt16") {
+                            opcuaDataType = opcua.DataType.UInt16;
+                        }
+                        if (datatype == "Double") {
+                            opcuaDataType = opcua.DataType.Double;
+                        }
+                        if (datatype == "Float") {
+                            opcuaDataType = opcua.DataType.Float;
+                        }
+                        if (datatype == "String") {
+                            opcuaDataType = opcua.DataType.String;
+                            variables[browseName] = "";
+                        }
+                        if (datatype == "Boolean") {
+                            opcuaDataType = opcua.DataType.Boolean;
+                            variables[browseName] = true;
+                        }
+                        verbose_log(opcuaDataType.toString());
+                        addressSpace.addVariable({
+                            componentOf: addressSpace.findNode(parentFolder.nodeId),
+                            nodeId: name,
+                            browseName: browseName, // or displayName
+                            dataType: opcuaDataType,
+                            value: {
+                                get: function () {
+                                    return new opcua.Variant({ dataType: opcuaDataType, value: variables[browseName] })
                                 }
                             }
-						});
-					}
+                        });
+                    }
                     break;
 
                 case "deleteNode":

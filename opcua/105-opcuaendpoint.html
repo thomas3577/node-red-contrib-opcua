@@ -20,14 +20,14 @@ limitations under the License.
     RED.nodes.registerType('OpcUa-Endpoint', {
         category: 'config',
         defaults: {
-            endpoint: {value: "", required: true},
-            secpol: {value: "None"},
-            secmode: {value: "NONE"},
-            login: {value: false}
+            endpoint: { value: "", required: true },
+            secpol: { value: "None" },
+            secmode: { value: "NONE" },
+            login: { value: false }
         },
         credentials: {
-            user: {type: "text"},
-            password: {type: "password"}
+            user: { type: "text" },
+            password: { type: "password" }
         },
         label: function () {
             return this.endpoint || "OPC UA Endpoint";
@@ -63,6 +63,7 @@ limitations under the License.
             }
         }
     });
+
 </script>
 
 <script type="text/x-red" data-template-name="OpcUa-Endpoint">
@@ -89,7 +90,7 @@ limitations under the License.
         </select>
     </div>
     <div class="form-row">
-        <lable><input type="checkbox" id="node-config-input-login" > use credentials</lable>
+        <lable><input type="checkbox" id="node-config-input-login"> use credentials</lable>
     </div>
     <div class="form-row node-input-useAuth-row">
         <label for="node-config-input-user"><i class="icon-user"></i> User</label>

@@ -17,25 +17,26 @@ limitations under the License.
 -->
 
 <script type="text/javascript">
-    RED.nodes.registerType('OpcUa-Event',{
+    RED.nodes.registerType('OpcUa-Event', {
         category: 'opcua',
-        color:"#3FADB5",
+        color: "#3FADB5",
         defaults: {
-            root: {value:"", required:true}, 	// ns=2;i=85 Server object to look through all objects under it
-            eventtype: {value:"", required:true}, 		// TODO ui should contain selectable condition types or all
-            name: {value:""}
+            root: { value: "", required: true }, 	// ns=2;i=85 Server object to look through all objects under it
+            eventtype: { value: "", required: true }, 		// TODO ui should contain selectable condition types or all
+            name: { value: "" }
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         align: "right",
         icon: "opcuanodeLogo.png",
-        label: function() {
+        label: function () {
             return this.name || "OPC UA Event";
         },
-        labelStyle: function() {
-            return this.name?"node_label_italic":"";
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
         }
     });
+
 </script>
 
 <script type="text/x-red" data-template-name="OpcUa-Event">
@@ -64,6 +65,6 @@ limitations under the License.
 
 <script type="text/x-red" data-help-name="OpcUa-Event">
     <p>Defines OPC UA events that will be subscribed from the server.</p>
-	<p>Server root node will used to look selected events under it.</p>
-	<p>Condition type can be left empty then all alarm / event objects will be taken into account.</p>
+    <p>Server root node will used to look selected events under it.</p>
+    <p>Condition type can be left empty then all alarm / event objects will be taken into account.</p>
 </script>
